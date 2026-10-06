@@ -1,0 +1,27 @@
+name: Deploy Supabase Edge Functions
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Deploy Edge Functions to Supabase
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          supabase functions deploy ai-phone-push --project-ref $PROJECT_ID
+          supabase functions deploy push-generate --project-ref $PROJECT_ID
+          supabase functions deploy push-bridge --project-ref $PROJECT_ID
+          supabase functions deploy push-shortcut-result --project-ref $PROJECT_ID
+          supabase functions deploy screen-chat --project-ref $PROJECT_ID
